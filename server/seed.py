@@ -8,7 +8,7 @@ from faker import Faker
 
 # Local imports
 from app import app
-from models import User
+from models import User, Reviews, Movies
 from config import db
 fake = Faker()
 
@@ -23,6 +23,30 @@ def create_users():
         users.append(u)
     return users
 
+def create_movies(users):
+    movies = []
+    for _ in range(15):
+        m = Movies(
+            title = fake.name(),
+            year = 2023,
+            created_by = rc(users).id, 
+        )
+        movies.append(m)
+    return movies
+
+def create_reviews(users, movies):
+    reviews = []
+    for _ in range(15):
+        r = Reviews(
+            content = fake.paragraph(),
+            user_id = rc(movies).id,
+            movie_id = rc(users).id, 
+        )
+        reviews.append(r)
+    return reviews
+
+
+
 
 
 
@@ -34,12 +58,21 @@ if __name__ == '__main__':
         # delete users
         print("delete data")
         db.session.query(User).delete()
-        db.session.query(FriendShip).delete()
+        db.session.query(Reviews).delete()
+        db.session.query(Movies).delete()
         db.session.commit()
 
         print("creating users")
         users = create_users()
         db.session.add_all(users)
+        db.session.commit()
+
+        movies = create_movies(users)
+        db.session.add_all(movies)
+        db.session.commit()
+
+        reviews = create_reviews(users, movies)
+        db.session.add_all(reviews)
         db.session.commit()
 
         

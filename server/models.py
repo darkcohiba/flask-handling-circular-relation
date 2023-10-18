@@ -13,6 +13,10 @@ class User(db.Model, SerializerMixin):
     email = db.Column(db.String)
     _password_hash = db.Column(db.String, nullable=False)
 
+    reviews = db.relationship('Reviews', back_populates="user")
+    movies = db.relationship('Movies', back_populates="user")
+
+
 
     @hybrid_property
     def password_hash(self):
@@ -35,8 +39,10 @@ class Reviews(db.Model, SerializerMixin):
     id = db.Column(db.Integer, primary_key=True)
     content = db.Column(db.String)
     user_id = db.Column(db.Integer, db.ForeignKey('users_table.id'))
-    movie_id = db.Column(db.Integer, db.ForeignKey('movies_table.id'))
+    user = db.relationship('User', back_populates="reviews" )
 
+    movie_id = db.Column(db.Integer, db.ForeignKey('movies_table.id'))
+    movie = db.relationship('Movies', back_populates='reviews')
 
 class Movies(db.Model, SerializerMixin):
     __tablename__ = 'movies_table'
@@ -44,6 +50,10 @@ class Movies(db.Model, SerializerMixin):
     title = db.Column(db.String)
     year = db.Column(db.Integer)
     created_by = db.Column(db.Integer, db.ForeignKey('users_table.id'))
+
+    user = db.relationship('User', back_populates='movies')
+
+    reviews = db.relationship('Reviews', back_populates="movie")
 
 
 
