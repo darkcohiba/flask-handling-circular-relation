@@ -29,9 +29,21 @@ class User(db.Model, SerializerMixin):
         return bcrypt.check_password_hash(
             self._password_hash, password.encode('utf-8'))
     
+
+class Reviews(db.Model, SerializerMixin):
+    __tablename__ = 'reviews_table'
+    id = db.Column(db.Integer, primary_key=True)
+    content = db.Column(db.String)
+    user_id = db.Column(db.Integer, db.ForeignKey('users_table.id'))
+    movie_id = db.Column(db.Integer, db.ForeignKey('movies_table.id'))
+
+
 class Movies(db.Model, SerializerMixin):
     __tablename__ = 'movies_table'
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String)
     year = db.Column(db.Integer)
-    created_by = db.
+    created_by = db.Column(db.Integer, db.ForeignKey('users_table.id'))
+
+
+
