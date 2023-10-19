@@ -16,6 +16,7 @@ class User(db.Model, SerializerMixin):
     reviews = db.relationship('Reviews', back_populates="user")
     movies = db.relationship('Movies', back_populates="user")
 
+    serialize_rules=('-reviews.user', '-movies.user')
 
 
     @hybrid_property
@@ -32,7 +33,7 @@ class User(db.Model, SerializerMixin):
     def authenticate(self, password):
         return bcrypt.check_password_hash(
             self._password_hash, password.encode('utf-8'))
-    
+
 
 class Reviews(db.Model, SerializerMixin):
     __tablename__ = 'reviews_table'
@@ -44,6 +45,8 @@ class Reviews(db.Model, SerializerMixin):
     movie_id = db.Column(db.Integer, db.ForeignKey('movies_table.id'))
     movie = db.relationship('Movies', back_populates='reviews')
 
+    serialize_rules=('-movie', '-user')
+
 class Movies(db.Model, SerializerMixin):
     __tablename__ = 'movies_table'
     id = db.Column(db.Integer, primary_key=True)
@@ -54,6 +57,5 @@ class Movies(db.Model, SerializerMixin):
     user = db.relationship('User', back_populates='movies')
 
     reviews = db.relationship('Reviews', back_populates="movie")
-
 
 
